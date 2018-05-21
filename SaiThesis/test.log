@@ -1,0 +1,28 @@
+Initializing Evaluator...
+Parsing Configuration...
+['config_files/session.config']
+config_files/session.config
+['CONFIG']
+Initializing Dataset...
+Initializing Dataset ....
+Dataset init complete....
+Algorithm Initialization
+('Registering callback', <function callback at 0x7f4b0da3acf8>)
+Initialization Complete...
+Starting Evaluator...
+rec_tmp []
+cdata    SessionID          Date     ItemId  Event
+2     263073  2.014040e+13  214716982      1
+Empty DataFrame
+Columns: [SessionID, ItemId, RLen, CLen]
+Index: []
+Got first item
+rec_tmp    SessionID     ItemId  Event
+2     263073  214716982      1
+cdata     SessionID          Date     ItemId  Event
+14     263073  2.014040e+13  214716982      1
+   CLen       ItemId  RLen  SessionID SessionId
+0   0.0  214716982.0   1.0   263073.0       NaN
+rec_tmp []
+cdata     SessionID          Date     ItemId  Event
+20     263073  2.014040e+13  214716982      1
