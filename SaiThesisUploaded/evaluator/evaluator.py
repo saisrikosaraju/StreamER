@@ -11,8 +11,6 @@ sys.path.insert(0, './main')
 sys.path.insert(0, './metrics')
 sys.path.insert(0, './plot')
 from parse_config import parse_config
-from metric_calculator import *
-from algorithm_handler import TriggerCallback
 from read_data import getData,initData
 from algo_random import *
 from algo_popular import *
