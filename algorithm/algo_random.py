@@ -38,6 +38,7 @@ class AlgorithmRandom(AlgorithmBase):
 
     
         #Fill in rest of the columns 
+        #Copy session id, date and event to inform the evaluator about the event that caused this recommendation
         temp_recs = temp_recs.reset_index(drop=True)
         ts = int(self.pd_temp['SessionID'])
         temp_recs['SessionID'] = ts
@@ -46,9 +47,11 @@ class AlgorithmRandom(AlgorithmBase):
         ts = int(self.pd_temp['Event'])
         temp_recs['Event'] = ts 
 
-        #Append the data to the data frame
+        #Append the current recommendation data to the data frame
         self.rec_db.append(temp_recs)
+        #Clear current event data, will be reused by event handler
         self.pd_temp = self.pd_temp.iloc[0:0]
+        #Update total recommendation count
         self.reward_cnt.loc[0]['RLen'] +=self.rec_size
 
         if (self.write_to_file == 1):
@@ -64,11 +67,15 @@ class AlgorithmRandom(AlgorithmBase):
             else: # else it exists so append without writing the header
                 self.reward_cnt.to_csv('random_algo_rew_100k.csv', mode='a', header=False)
         return temp_recs;
-    
+
     def RewardHandler(self, pd):
         """Reward Handler Object"""
-        self.reward_db = self.reward_db.append(pd) 
+        #Add reward information to reward database
+        self.reward_db = self.reward_db.append(pd)
+        #Update reward counters
         self.reward_cnt.loc[0]['RewardLen'] +=1
+
+        #Write to file
         if (self.write_to_file == 1):
             if not os.path.isfile('random_algo_reward_100k.csv'):
                 self.reward_db.to_csv('random_algo_reward_100k.csv', header='column_names')

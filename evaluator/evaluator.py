@@ -3,13 +3,13 @@ import sys
 import time
 import pandas as pd
 
-sys.path.insert(0, './algorithm')
-sys.path.insert(0, './config_files')
-sys.path.insert(0, './data')
-sys.path.insert(0, './evaluator')
-sys.path.insert(0, './main')
-sys.path.insert(0, './metrics')
-sys.path.insert(0, './plot')
+sys.path.insert(0, 'algorithm')
+sys.path.insert(0, 'config_files')
+sys.path.insert(0, 'data')
+sys.path.insert(0, 'evaluator')
+sys.path.insert(0, 'utils')
+sys.path.insert(0, 'metrics')
+sys.path.insert(0, 'plot')
 from parse_config import parse_config
 from read_data import getData,initData
 from algo_random import *
@@ -69,9 +69,11 @@ class Evaluator:
         rec_tmp = pd.DataFrame({})
         #Read Data
         gd = getData();
+
         #Loop until nothing else to read
         while (gd.empty == False):
-            count = 0
+            count = 0 #variable that holds algorithm identifier
+
             #Call Algorithm and get Recommendations
             for i in self.algorithms:
                 # Call the algorithm with event handler
@@ -79,14 +81,16 @@ class Evaluator:
 
                 #Request recommendation
                 tmp = i.RequestRecommendation();
+
+                #Add non-empty recommendations to temporary dataframe
                 if (len(tmp) > 0):
-                    tmp['Algo'] = count;
+                    tmp['Algo'] = count; #Identify algorithm that produced recommendation
                     if rec_tmp.empty:
                         rec_tmp = tmp;
                     else:
                         rec_tmp = rec_tmp.append(tmp);
                 
-                count += 1
+                count += 1 #Move to next algorithm
        
             self.reco_db = self.reco_db.append(rec_tmp)
             #Read Data Again
@@ -97,6 +101,7 @@ class Evaluator:
             for i in self.metrics:
                 i.UpdateMetric(rec_tmp, gd)
 
+            #Calculate rewards if the next data event is buy
             if ((gd['Event'] == 3).any() == True):
                 self.Reward_Calculator(gd)
 
@@ -109,8 +114,9 @@ class Evaluator:
 
         count = 0
         for i in self.algorithms:
-            # Call the algorithm with event handler
+            #Get all the recommendations from the given algorithm
             algo_rec = self.reco_db.loc[self.reco_db['Algo'] == count]
+            #Get the session that matches the recommendation
             tmp_db = algo_rec.loc[algo_rec['SessionID'].isin(gd['SessionID'])]
 
             if (self.write_to_file == 1):
@@ -123,6 +129,7 @@ class Evaluator:
                     gd.to_csv('eval_reward_100k.csv', mode='a')
                     tmp_db.to_csv('eval_reward_100k.csv', mode='a')
 
+            # If the item is in that session recommendation, then reward
             if(gd['ItemId'].isin(tmp_db['ItemId']).any() == True):
                 i.RewardHandler(gd);
             count += 1

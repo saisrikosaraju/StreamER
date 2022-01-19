@@ -1,11 +1,13 @@
+#!/bin/python3
 import numpy
 import sys
 import time
 import pandas as pd
 import importlib
 
-sys.path.insert(0, './evaluator')
-sys.path.insert(0, './config_files')
+sys.path.insert(1, 'evaluator')
+sys.path.insert(1, 'config_files')
+
 from evaluator import *
 from algo_random import *
 from algo_popular import *
@@ -13,7 +15,7 @@ from metric_ctr import *
 from metric_precision import *
 FilePath='config_files/session.config'
 
-print 'parsing configuration'
+print('parsing configuration')
 
 algo_popular = AlgorithmPopular();
 algo_random = AlgorithmRandom();
